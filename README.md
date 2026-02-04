@@ -1,37 +1,47 @@
 # AuthX
 
-AuthX is an all-in-one digital security solution that combines a premium password manager and a TOTP-based two-factor authenticator in a single, minimalist application.
+AuthX is an all-in-one digital security application that combines a premium password manager with a TOTP-based two-factor authenticator in a single, minimalist experience.
 
-Developed with a privacy-first mindset, AuthX ensures that your sensitive data remains local and encrypted at all times.
+Built with a privacy-first approach, AuthX ensures that all sensitive data remains fully local and encrypted at all times — no cloud, no tracking, no external dependencies.
 
 ## Key Features
 
-- **Unified Security**: Password management and 2FA codes in one place.
+- **Unified Security**: Password management and TOTP-based 2FA in a single app.
 - **Smart Autofill**: Context-aware credential suggestions for apps and websites.
-- **Biometric Protection**: Instant access via Fingerprint or Face Recognition.
-- **Local Encryption**: Secure local database using SQLCipher.
+- **Biometric Protection**: Secure and instant access using fingerprint or face recognition.
+- **Local Encryption**: Encrypted local database powered by SQLCipher.
 - **Privacy Guaranteed**: Automatic blur overlay and screen capture protection.
-- **Offline First**: No cloud synchronization, giving you total control over your data.
+- **Offline-First**: Fully functional without internet access.
 
 ## Mockups
 
-[Insert Mockup Image 1 Here]
-[Insert Mockup Image 2 Here]
-[Insert Mockup Image 3 Here]
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/3ad69271-9bf2-4d6f-88ce-d48fafccd32e" alt="Home screen mockup" height="500" />
+  <img src="https://github.com/user-attachments/assets/7ad26dfc-9d29-4fb9-8b0c-d780c0a5845a" alt="Settings screen mockup" height="500" />
+</p>
 
 ## Installation
 
-To build and run AuthX from source:
+Download the prebuilt APK from Uptodown:
+https://authx.uptodown.com/android
 
-1. Clone the repository.
+### Build from source
+
+To build and run AuthX locally:
+
+1. Clone this repository.
 2. Open the project in Android Studio.
-3. Build the APK using Gradle: `./gradlew assembleDebug`.
-4. Install on your device.
+3. Build the debug APK using Gradle:
+   ```bash
+   ./gradlew assembleDebug
+
+4. Install the generated APK on your Android device.
 
 ## Security Architecture
 
-AuthX utilizes SQLCipher for database-level encryption. The application logic is designed to minimize the attack surface by keeping all sensitive information within the device's secure storage.
+AuthX uses SQLCipher for database-level encryption and Android's secure APIs for biometric authentication.
+All sensitive operations are performed locally to reduce the attack surface and eliminate external data exposure.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
