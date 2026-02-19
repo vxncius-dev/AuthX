@@ -5,8 +5,6 @@
 
 AuthX is an all-in-one digital security application that combines a premium password manager with a TOTP-based two-factor authenticator in a single, minimalist experience.
 
-[![Download on Uptodown](https://img.shields.io/badge/Download-Uptodown-green)](https://authx.br.uptodown.com/android)
-
 Built with a privacy-first approach, AuthX ensures that all sensitive data remains fully local and encrypted at all times — no cloud, no tracking, no external dependencies.
 
 ## Key Features
@@ -28,7 +26,8 @@ Built with a privacy-first approach, AuthX ensures that all sensitive data remai
 ## Installation
 
 Download the prebuilt APK from Uptodown:
-https://authx.uptodown.com/android
+<br><br>
+[![Download on Uptodown](https://img.shields.io/badge/Download-Uptodown-green)](https://authx.br.uptodown.com/android)
 
 ### Build from source
 
