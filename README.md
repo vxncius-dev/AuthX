@@ -1,6 +1,11 @@
-# AuthX
+<h1 align="center">
+  <img width="60" height="60" src="https://github.com/user-attachments/assets/4d07bc76-d20d-458b-ba05-fd0963af2fc9" alt="AuthX logo" /><br/>
+  AuthX
+</h1>
 
 AuthX is an all-in-one digital security application that combines a premium password manager with a TOTP-based two-factor authenticator in a single, minimalist experience.
+
+[![Download on Uptodown](https://img.shields.io/badge/Download-Uptodown-green)](https://authx.en.uptodown.com/android)
 
 Built with a privacy-first approach, AuthX ensures that all sensitive data remains fully local and encrypted at all times — no cloud, no tracking, no external dependencies.
 
