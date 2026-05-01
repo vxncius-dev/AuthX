@@ -1,30 +1,72 @@
 package com.vxncius.authx.ui
+
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.CreditCard
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Password
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.VpnKey
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.vxncius.authx.data.VaultItem
-import com.vxncius.authx.playfairDisplayFont
+
+private val FabDark = Color(0xFF212121)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
@@ -38,39 +80,31 @@ fun HomeScreen(
     onAddCardClick: () -> Unit,
     onAddAddressClick: () -> Unit,
     onGeneratePasswordClick: () -> Unit,
-    listState: androidx.compose.foundation.lazy.LazyListState = androidx.compose.foundation.lazy.rememberLazyListState()
+    listState: LazyListState = rememberLazyListState()
 ) {
     var selectedItems by remember { mutableStateOf(setOf<VaultItem>()) }
     var selectionMode by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
-    val filteredItems = items.filter { 
-        it.title.contains(searchQuery, ignoreCase = true) || 
-        it.username.contains(searchQuery, ignoreCase = true) ||
-        it.websiteUrl.contains(searchQuery, ignoreCase = true)
+    var passwordsExpanded by rememberSaveable { mutableStateOf(true) }
+    var cardsExpanded by rememberSaveable { mutableStateOf(true) }
+    var placesExpanded by rememberSaveable { mutableStateOf(true) }
+    val focusManager = LocalFocusManager.current
+
+    val searchedItems = items.filter {
+        it.title.contains(searchQuery, ignoreCase = true) ||
+            it.username.contains(searchQuery, ignoreCase = true) ||
+            it.websiteUrl.contains(searchQuery, ignoreCase = true)
     }
-    val groupedItems = filteredItems.groupBy { 
-        when (it.type) {
-            "CARD" -> "Cartões"
-            "ADDRESS" -> "Locais"
-            else -> if (it.totpSecret != null) "Vaults + 2FA" else "Vaults"
-        }
-    }.toSortedMap(compareBy {
-        when (it) {
-            "Vaults + 2FA" -> 0
-            "Vaults" -> 1
-            "Cartões" -> 2
-            "Locais" -> 3
-            else -> 4
-        }
-    })
+    val passwordItems = searchedItems.filter { it.type != "CARD" && it.type != "ADDRESS" }
+    val cardItems = searchedItems.filter { it.type == "CARD" }
+    val placeItems = searchedItems.filter { it.type == "ADDRESS" }
+    val filteredItems = passwordItems + cardItems + placeItems
+
     fun toggleSelection(item: VaultItem) {
-        selectedItems = if (selectedItems.contains(item)) {
-            selectedItems - item
-        } else {
-            selectedItems + item
-        }
+        selectedItems = if (selectedItems.contains(item)) selectedItems - item else selectedItems + item
         if (selectedItems.isEmpty()) selectionMode = false
     }
+
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
@@ -93,56 +127,58 @@ fun HomeScreen(
             }
         )
     }
+
     androidx.activity.compose.BackHandler(enabled = selectionMode) {
         selectionMode = false
         selectedItems = emptySet()
     }
-    val focusManager = androidx.compose.ui.platform.LocalFocusManager.current
+
     Scaffold(
         modifier = Modifier.clickable(
-            interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
+            interactionSource = remember { MutableInteractionSource() },
             indication = null
         ) { focusManager.clearFocus() },
         topBar = {
             if (selectionMode) {
-                TopAppBar(
-                    title = { Text("${selectedItems.size} selecionado(s)") },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background,
-                        titleContentColor = MaterialTheme.colorScheme.onBackground
-                    ),
+                AuthXHeaderRow(
+                    title = {
+                        Text(
+                            text = "${selectedItems.size} selecionado(s)",
+                            color = Color.White,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.weight(1f)
+                        )
+                    },
                     actions = {
-                        IconButton(onClick = { 
-                            showDeleteDialog = true
-                        }) {
-                            Icon(Icons.Default.Delete, contentDescription = "Excluir Selecionados", tint = Color.Red)
+                        IconButton(onClick = { showDeleteDialog = true }) {
+                            Icon(Icons.Default.Delete, contentDescription = "Excluir selecionados", tint = Color.Red)
                         }
-                        IconButton(onClick = { 
+                        IconButton(onClick = {
                             selectionMode = false
                             selectedItems = emptySet()
                         }) {
-                            Icon(Icons.Default.Close, contentDescription = "Cancelar")
+                            Icon(Icons.Default.Close, contentDescription = "Cancelar", tint = Color.White)
                         }
                     }
                 )
             } else {
                 Column {
-                    TopAppBar(
-                        title = { 
+                    AuthXHeaderRow(
+                        topPadding = 13.dp,
+                        bottomPadding = 8.dp,
+                        title = {
                             Text(
-                                "AuthX", 
-                                fontFamily = playfairDisplayFont, 
+                                text = "AuthX",
+                                color = Color.White,
+                                style = MaterialTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 24.sp
-                            ) 
+                                modifier = Modifier.weight(1f)
+                            )
                         },
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.background,
-                            titleContentColor = MaterialTheme.colorScheme.onBackground
-                        ),
                         actions = {
                             IconButton(onClick = onSettingsClick) {
-                                Icon(Icons.Default.Settings, contentDescription = "Configurações")
+                                Icon(Icons.Default.Menu, contentDescription = "Abrir menu", tint = Color.White)
                             }
                         }
                     )
@@ -152,7 +188,7 @@ fun HomeScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 8.dp),
-                        placeholder = { Text("Pesquisar nos cofres...") },
+                        placeholder = { Text("Pesquisar") },
                         leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray) },
                         trailingIcon = {
                             if (searchQuery.isNotEmpty()) {
@@ -176,52 +212,40 @@ fun HomeScreen(
         floatingActionButton = {
             if (!selectionMode) {
                 var showFabMenu by remember { mutableStateOf(false) }
-                Box(modifier = Modifier.padding(bottom = 80.dp)) {
-                    FloatingActionButton(
-                        onClick = { showFabMenu = true },
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                        shape = RoundedCornerShape(10.dp)
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = "Novo Item")
+                Column(
+                    modifier = Modifier.padding(bottom = 64.dp),
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    if (showFabMenu) {
+                        FabMenuAction("Gerar senha", Icons.Default.Password) {
+                            showFabMenu = false
+                            onGeneratePasswordClick()
+                        }
+                        FabMenuAction("Novo endereço", Icons.Default.Home) {
+                            showFabMenu = false
+                            onAddAddressClick()
+                        }
+                        FabMenuAction("Novo cartão", Icons.Default.CreditCard) {
+                            showFabMenu = false
+                            onAddCardClick()
+                        }
+                        FabMenuAction("Nova senha", Icons.Default.VpnKey) {
+                            showFabMenu = false
+                            onAddClick()
+                        }
                     }
-                    DropdownMenu(
-                        expanded = showFabMenu,
-                        onDismissRequest = { showFabMenu = false },
-                        modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant)
+                    FloatingActionButton(
+                        onClick = { showFabMenu = !showFabMenu },
+                        containerColor = FabDark,
+                        contentColor = Color.White,
+                        shape = CircleShape,
+                        modifier = Modifier.size(60.dp)
                     ) {
-                         DropdownMenuItem(
-                            text = { Text("Novo Item") },
-                            leadingIcon = { Icon(Icons.Default.VpnKey, contentDescription = null) },
-                            onClick = { 
-                                showFabMenu = false
-                                onAddClick() 
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Novo Cartão") },
-                            leadingIcon = { Icon(Icons.Default.CreditCard, contentDescription = null) },
-                            onClick = { 
-                                showFabMenu = false
-                                onAddCardClick()
-                            }
-                        )
-                         DropdownMenuItem(
-                            text = { Text("Novo Endereço") },
-                            leadingIcon = { Icon(Icons.Default.Home, contentDescription = null) },
-                            onClick = { 
-                                showFabMenu = false 
-                                onAddAddressClick()
-                            }
-                        )
-                        Divider()
-                        DropdownMenuItem(
-                            text = { Text("Gerar Senha Forte") },
-                            leadingIcon = { Icon(Icons.Default.Password, contentDescription = null) },
-                            onClick = { 
-                                showFabMenu = false
-                                onGeneratePasswordClick()
-                            }
+                        Icon(
+                            imageVector = if (showFabMenu) Icons.Default.Close else Icons.Default.Add,
+                            contentDescription = if (showFabMenu) "Fechar menu" else "Novo item",
+                            modifier = Modifier.size(28.dp)
                         )
                     }
                 }
@@ -229,9 +253,18 @@ fun HomeScreen(
         }
     ) { padding ->
         if (filteredItems.isEmpty()) {
-            Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = Alignment.Center
+            ) {
                 Text(
-                    if (searchQuery.isEmpty()) "Nenhum item ainda. Adicione um!" else "Nenhum item encontrado",
+                    text = if (searchQuery.isEmpty()) {
+                        "Nenhum item ainda. Adicione um!"
+                    } else {
+                        "Nenhum item encontrado"
+                    },
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color.Gray
                 )
@@ -241,49 +274,144 @@ fun HomeScreen(
                 modifier = Modifier.padding(padding),
                 state = listState
             ) {
-                groupedItems.forEach { (header, groupItems) ->
-                    item {
-                        Text(
-                            header,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.background)
-                                .padding(horizontal = 16.dp, vertical = 8.dp),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    items(groupItems.sortedBy { it.title.lowercase() }) { item ->
-                        val isSelected = selectedItems.contains(item)
-                        VaultItemRow(
-                            item = item,
-                            isSelected = isSelected,
-                            selectionMode = selectionMode,
-                            onClick = { 
-                                if (selectionMode) {
-                                    toggleSelection(item)
-                                } else {
-                                    onItemClick(item)
-                                }
-                            },
-                            onLongClick = {
-                                selectionMode = true
-                                toggleSelection(item)
-                            }
-                        )
-                    }
-                }
+                vaultSection(
+                    title = "Senhas",
+                    count = passwordItems.size,
+                    expanded = passwordsExpanded,
+                    onToggle = { passwordsExpanded = !passwordsExpanded },
+                    items = passwordItems,
+                    selectedItems = selectedItems,
+                    selectionMode = selectionMode,
+                    onItemClick = onItemClick,
+                    onToggleSelection = ::toggleSelection,
+                    onEnterSelection = { selectionMode = true }
+                )
+                vaultSection(
+                    title = "Cartões",
+                    count = cardItems.size,
+                    expanded = cardsExpanded,
+                    onToggle = { cardsExpanded = !cardsExpanded },
+                    items = cardItems,
+                    selectedItems = selectedItems,
+                    selectionMode = selectionMode,
+                    onItemClick = onItemClick,
+                    onToggleSelection = ::toggleSelection,
+                    onEnterSelection = { selectionMode = true }
+                )
+                vaultSection(
+                    title = "Locais",
+                    count = placeItems.size,
+                    expanded = placesExpanded,
+                    onToggle = { placesExpanded = !placesExpanded },
+                    items = placeItems,
+                    selectedItems = selectedItems,
+                    selectionMode = selectionMode,
+                    onItemClick = onItemClick,
+                    onToggleSelection = ::toggleSelection,
+                    onEnterSelection = { selectionMode = true }
+                )
             }
         }
     }
 }
+
+@Composable
+private fun FabMenuAction(
+    label: String,
+    icon: ImageVector,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier.padding(end = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.End
+    ) {
+        Text(
+            text = label,
+            color = Color.White,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Medium
+        )
+        Spacer(Modifier.width(12.dp))
+        FloatingActionButton(
+            onClick = onClick,
+            containerColor = FabDark,
+            contentColor = Color.White,
+            shape = CircleShape,
+            modifier = Modifier.size(48.dp)
+        ) {
+            Icon(icon, contentDescription = label)
+        }
+    }
+}
+
+private fun LazyListScope.vaultSection(
+    title: String,
+    count: Int,
+    expanded: Boolean,
+    onToggle: () -> Unit,
+    items: List<VaultItem>,
+    selectedItems: Set<VaultItem>,
+    selectionMode: Boolean,
+    onItemClick: (VaultItem) -> Unit,
+    onToggleSelection: (VaultItem) -> Unit,
+    onEnterSelection: () -> Unit
+) {
+    item {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onToggle)
+                .padding(horizontal = 20.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Text(
+                    text = "$count item(ns)",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray
+                )
+            }
+            Icon(
+                imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+        }
+    }
+    if (expanded) {
+        items(items.sortedBy { it.title.lowercase() }) { item ->
+            val isSelected = selectedItems.contains(item)
+            VaultItemRow(
+                item = item,
+                isSelected = isSelected,
+                onClick = {
+                    if (selectionMode) {
+                        onToggleSelection(item)
+                    } else {
+                        onItemClick(item)
+                    }
+                },
+                onLongClick = {
+                    onEnterSelection()
+                    onToggleSelection(item)
+                }
+            )
+        }
+    }
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun VaultItemRow(
     item: VaultItem,
     isSelected: Boolean,
-    selectionMode: Boolean,
     onClick: () -> Unit,
     onLongClick: () -> Unit
 ) {
@@ -305,7 +433,9 @@ fun VaultItemRow(
             .removePrefix("www.")
         val iconUrl = if (cleanUrl.isNotEmpty()) {
             "https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://$cleanUrl&size=128"
-        } else null
+        } else {
+            null
+        }
         Box(
             modifier = Modifier
                 .size(48.dp)
@@ -323,12 +453,14 @@ fun VaultItemRow(
                 Image(
                     painter = rememberAsyncImagePainter(iconUrl),
                     contentDescription = null,
-                    modifier = Modifier.fillMaxSize().padding(10.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(10.dp),
                     contentScale = ContentScale.Fit
                 )
             } else {
                 Text(
-                    item.title.firstOrNull()?.uppercase() ?: "?",
+                    text = item.title.firstOrNull()?.uppercase() ?: "?",
                     style = MaterialTheme.typography.headlineSmall,
                     color = Color.Black
                 )
@@ -337,23 +469,22 @@ fun VaultItemRow(
         Spacer(Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                item.title,
+                text = item.title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
-                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis
             )
             val subtitle = item.username.ifEmpty { item.websiteUrl }
             if (subtitle.isNotEmpty()) {
                 Text(
-                    subtitle,
+                    text = subtitle,
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray,
                     maxLines = 1,
-                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
     }
 }
-

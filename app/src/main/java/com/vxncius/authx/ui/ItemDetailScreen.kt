@@ -112,22 +112,24 @@ fun ItemDetailScreen(
     }
     Scaffold(
         topBar = {
-            TopAppBar(
+            AuthXHeaderRow(
                 title = { 
                     if (isEditing) {
                         TextField(
                             value = editedItem.title,
                             onValueChange = { editedItem = editedItem.copy(title = it) },
+                            modifier = Modifier.weight(1f),
                             placeholder = { Text("Título") },
                             colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent)
                         )
                     } else {
-                        Text(item.title)
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = if (isEditing) { { isEditing = false } } else onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Voltar")
+                        Text(
+                            text = item.title,
+                            color = Color.White,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.weight(1f)
+                        )
                     }
                 },
                 actions = {

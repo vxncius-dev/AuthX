@@ -7,129 +7,136 @@
     <title>Política de Privacidade - AuthX</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-                Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-            line-height: 1.6;
-            margin: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.7;
+            margin: 0 18px 18px;
             color: #111;
-            background-color: #fff;
+            background: #fff;
         }
 
         h1,
         h2 {
+            color: #111;
             margin-top: 24px;
         }
 
         h1 {
-            font-size: 1.5rem;
+            font-size: 1.55rem;
         }
 
         h2 {
-            font-size: 1.1rem;
+            font-size: 1.08rem;
         }
 
-        p {
-            margin: 8px 0;
+        p,
+        li {
+            font-size: 0.98rem;
         }
 
         ul {
-            margin-left: 20px;
+            padding-left: 20px;
         }
 
         footer {
             margin-top: 32px;
-            font-size: 0.9rem;
             color: #555;
-        }
-
-        a {
-            color: #0066cc;
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
+            font-size: 0.92rem;
         }
     </style>
 </head>
 
 <body>
-
     <h1>Política de Privacidade</h1>
 
-    <h2>1. Introdução</h2>
+    <h2>1. Visão Geral</h2>
     <p>
-        A privacidade do usuário é a prioridade absoluta do AuthX. Esta Política de
-        Privacidade descreve de forma clara e objetiva como as informações são tratadas.
-        O princípio fundamental do AuthX é a proteção máxima de dados por meio do
-        isolamento: todas as informações permanecem exclusivamente no dispositivo do usuário.
+        O AuthX foi criado para manter seus dados sensíveis sob seu controle. O aplicativo
+        armazena senhas, cartões, endereços, notas e códigos TOTP localmente no dispositivo e
+        não mantém uma conta em servidor próprio.
     </p>
 
-    <h2>2. Coleta de Dados (Zero Data Collection)</h2>
+    <h2>2. Dados que Você Pode Armazenar</h2>
     <p>
-        O AuthX opera sob uma arquitetura estritamente offline.
+        Dependendo do uso, você pode inserir no AuthX:
     </p>
     <ul>
-        <li>Não coletamos, não transmitimos e não armazenamos dados pessoais, senhas, tokens ou chaves de autenticação
-            em servidores externos.</li>
-        <li>Não utilizamos cookies, rastreadores, ferramentas de análise (analytics) ou qualquer tecnologia de
-            monitoramento de terceiros.</li>
+        <li>nomes de serviços, sites e aplicativos;</li>
+        <li>usuários, e-mails, senhas e notas;</li>
+        <li>dados de cartões e endereços;</li>
+        <li>segredos TOTP usados para gerar códigos de autenticação;</li>
+        <li>arquivos de backup importados ou exportados pelo próprio app.</li>
     </ul>
 
-    <h2>3. Armazenamento de Dados</h2>
+    <h2>3. Onde os Dados Ficam</h2>
     <p>
-        Todos os dados inseridos ou gerados pelo AuthX, incluindo chaves de autenticação
-        de dois fatores, são armazenados exclusivamente na memória interna do dispositivo
-        do usuário.
-    </p>
-    <p>
-        O Desenvolvedor não possui acesso técnico aos dados armazenados. Em caso de perda
-        do dispositivo ou desinstalação do aplicativo sem a realização de backup prévio,
-        não será possível recuperar as informações, garantindo que somente o próprio
-        usuário tenha acesso a elas.
+        Os dados do cofre ficam no armazenamento local do aplicativo, em banco de dados
+        criptografado. O desenvolvedor não possui acesso ao conteúdo salvo no seu dispositivo.
     </p>
 
-    <h2>4. Segurança</h2>
+    <h2>4. Coleta e Compartilhamento</h2>
     <p>
-        O AuthX foi projetado seguindo os melhores padrões de design e eficiência de código,
-        utilizando os mecanismos de segurança disponibilizados pelo sistema operacional
-        para proteger os dados locais e impedir o acesso por aplicativos maliciosos.
+        O AuthX não vende dados, não possui conta de usuário em servidor próprio e não envia seu
+        cofre para uma nuvem do desenvolvedor. Também não utiliza cookies ou ferramentas próprias
+        de rastreamento para acompanhar seu comportamento.
     </p>
 
-    <h2>5. Compartilhamento com Terceiros</h2>
+    <h2>5. Autofill do Android</h2>
     <p>
-        O AuthX não realiza comunicação com a internet para fins de transmissão de dados.
-        Dessa forma, não há compartilhamento de informações com terceiros, incluindo
-        anunciantes, parceiros comerciais, autoridades governamentais ou quaisquer outras
-        entidades.
+        Se você ativar o AuthX como serviço de preenchimento automático, o Android poderá fornecer
+        ao aplicativo informações sobre campos de formulários, aplicativos e páginas para permitir
+        sugestões de preenchimento e salvamento. Essas informações são processadas para executar a
+        função de Autofill e não são enviadas a servidores próprios do AuthX.
     </p>
 
-    <h2>6. Alterações nesta Política</h2>
+    <h2>6. Permissões e Recursos do Dispositivo</h2>
+    <ul>
+        <li><strong>Câmera:</strong> usada para escanear QR Codes de configuração TOTP.</li>
+        <li><strong>Biometria:</strong> usada para bloquear e desbloquear o acesso ao aplicativo.</li>
+        <li><strong>Armazenamento/Documentos:</strong> usado quando você importa ou exporta backups.</li>
+        <li><strong>Internet:</strong> pode ser usada por recursos como carregamento de favicons de sites associados aos itens.</li>
+    </ul>
+
+    <h2>7. Backups Criptografados</h2>
     <p>
-        Esta Política de Privacidade poderá ser atualizada caso ocorram alterações futuras
-        no aplicativo que impactem o processamento de dados. Ainda assim, o compromisso
-        com a funcionalidade offline e com a privacidade máxima do usuário permanecerá
-        inalterado.
+        O AuthX pode exportar backups criptografados em formato próprio. Esses arquivos são
+        projetados para não serem úteis em outros aplicativos ou sistemas. Ainda assim, você deve
+        protegê-los, pois eles contêm dados sensíveis em forma criptografada.
+    </p>
+    <p>
+        A possibilidade de restaurar um backup pode depender da chave segura do Android associada
+        à instalação do aplicativo e ao dispositivo. Em alguns cenários, como desinstalação,
+        limpeza de dados ou troca de aparelho, o backup criptografado pode não ser recuperável.
     </p>
 
-    <h2>7. Contato</h2>
+    <h2>8. Retenção e Exclusão</h2>
     <p>
-        Para dúvidas técnicas ou esclarecimentos relacionados a esta Política de Privacidade,
-        o usuário pode entrar em contato com o Desenvolvedor:
+        Os dados permanecem no dispositivo enquanto você mantiver o aplicativo e os itens salvos.
+        Você pode excluir itens dentro do app. A desinstalação ou limpeza dos dados do aplicativo
+        pode remover permanentemente o cofre local.
+    </p>
+
+    <h2>9. Segurança</h2>
+    <p>
+        O AuthX usa recursos de segurança do Android, criptografia local e bloqueio biométrico
+        quando disponível. Nenhuma medida de segurança é absoluta; por isso, mantenha seu
+        dispositivo protegido, atualizado e livre de aplicativos maliciosos.
+    </p>
+
+    <h2>10. Alterações nesta Política</h2>
+    <p>
+        Esta Política pode ser atualizada conforme o aplicativo evoluir. A versão atual estará
+        disponível dentro do app.
+    </p>
+
+    <h2>11. Contato</h2>
+    <p>
+        Para dúvidas, solicitações ou feedback sobre privacidade, utilize o canal de contato
+        informado no aplicativo.
     </p>
 
     <footer>
-        <p><strong>Desenvolvedor:</strong> Vinicius Oliveira (Vxncius)</p>
-        <p>
-            GitHub:
-            <a href="https://github.com/vxncius-dev" target="_blank" rel="noopener noreferrer">
-                github.com/vxncius-dev
-            </a>
-        </p>
-        <p>Email: vxncius@hotmail.com</p>
-        <p>AuthX — 01 de fevereiro de 2026</p>
+        <p><strong>AuthX</strong> © 2026 Vxncius - Todos os direitos reservados.</p>
     </footer>
-
 </body>
 
 </html>

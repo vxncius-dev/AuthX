@@ -5,6 +5,19 @@ plugins {
     id("kotlin-kapt")
 }
 
+import java.util.Properties
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use(::load)
+    }
+}
+
+fun signingProperty(name: String): String? {
+    return localProperties.getProperty(name) ?: System.getenv(name)
+}
+
 android {
     namespace = "com.vxncius.authx"
     compileSdk = 35
@@ -12,9 +25,9 @@ android {
     defaultConfig {
         applicationId = "com.vxncius.authx"
         minSdk = 26
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        targetSdk = 35
+        versionCode = 12105
+        versionName = "1.21.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -24,10 +37,10 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("authx-release.keystore")
-            storePassword = "081121"
-            keyAlias = "authx"
-            keyPassword = "081121"
+            storeFile = file(signingProperty("AUTHX_RELEASE_STORE_FILE") ?: "authx-release.keystore")
+            storePassword = signingProperty("AUTHX_RELEASE_STORE_PASSWORD")
+            keyAlias = signingProperty("AUTHX_RELEASE_KEY_ALIAS")
+            keyPassword = signingProperty("AUTHX_RELEASE_KEY_PASSWORD")
         }
     }
 

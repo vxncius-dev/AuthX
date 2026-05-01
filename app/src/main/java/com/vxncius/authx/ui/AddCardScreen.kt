@@ -1,17 +1,35 @@
 package com.vxncius.authx.ui
+
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.vxncius.authx.data.VaultItem
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddCardScreen(
@@ -23,22 +41,12 @@ fun AddCardScreen(
     var cardNumber by remember { mutableStateOf("") }
     var expiryDate by remember { mutableStateOf("") }
     var cvv by remember { mutableStateOf("") }
-    var pin by remember { mutableStateOf("") }
+
     BackHandler(onBack = onBack)
+
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Novo Cartão") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Voltar")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    titleContentColor = MaterialTheme.colorScheme.onBackground
-                )
-            )
+            AuthXHeader("Novo Cartão", bottomPadding = 0.dp)
         }
     ) { padding ->
         Column(
@@ -89,7 +97,6 @@ fun AddCardScreen(
                     shape = MaterialTheme.shapes.medium
                 )
             }
-            Spacer(Modifier.height(8.dp))
             Spacer(Modifier.height(32.dp))
             Button(
                 onClick = {
@@ -106,7 +113,9 @@ fun AddCardScreen(
                         )
                     }
                 },
-                modifier = Modifier.fillMaxWidth().height(50.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
                 enabled = cardName.isNotBlank() && cardNumber.isNotBlank(),
                 shape = MaterialTheme.shapes.medium
             ) {
@@ -115,4 +124,3 @@ fun AddCardScreen(
         }
     }
 }
-
