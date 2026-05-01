@@ -28,11 +28,13 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontFamily.Companion.SansSerif
 import androidx.lifecycle.lifecycleScope
 import com.vxncius.authx.data.AppDatabase
 import com.vxncius.authx.data.VaultItem
 import com.vxncius.authx.logic.BiometricHelper
 import com.vxncius.authx.ui.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import androidx.compose.ui.text.font.FontFamily
@@ -41,13 +43,12 @@ import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.graphics.Color as ColorCompose
 import com.vxncius.authx.R
 val Context.dataStore by preferencesDataStore(name = "settings")
-val DARK_MODE_KEY = booleanPreferencesKey("dark_mode")
 val playfairDisplayFont = FontFamily(
     androidx.compose.ui.text.font.Font(R.font.youngserif_regular, FontWeight.Normal),
     androidx.compose.ui.text.font.Font(R.font.youngserif_regular, FontWeight.Bold)
 )
 val Black = ColorCompose(0xFF000000)
-val DarkBg = ColorCompose(0xFF161618)
+val DarkBg = ColorCompose(0xFF000000)
 val DarkSecondary = ColorCompose(0xFF212121)
 val Gray900 = ColorCompose(0xFF121212)
 val Gray800 = ColorCompose(0xFF1E1E1E)
@@ -71,22 +72,6 @@ val DarkGrayColorScheme = darkColorScheme(
     secondaryContainer = DarkSecondary,
     onSecondaryContainer = White
 )
-val LightGrayColorScheme = lightColorScheme(
-    primary = Black,
-    onPrimary = White,
-    secondary = Gray700,
-    onSecondary = White,
-    background = ColorCompose(0xFFFFFFFF),
-    onBackground = Black,
-    surface = ColorCompose(0xFFFFFFFF),
-    onSurface = Black,
-    surfaceVariant = ColorCompose(0xFFF2F2F2),
-    onSurfaceVariant = Black,
-    primaryContainer = ColorCompose(0xFFF2F2F2),
-    onPrimaryContainer = Black,
-    secondaryContainer = ColorCompose(0xFFF2F2F2),
-    onSecondaryContainer = Black
-)
 val AppShapes = Shapes(
     extraSmall = RoundedCornerShape(8.dp),
     small = RoundedCornerShape(8.dp),
@@ -95,15 +80,15 @@ val AppShapes = Shapes(
     extraLarge = RoundedCornerShape(16.dp)
 )
 val AppTypography = Typography().copy(
-    displayLarge = Typography().displayLarge.copy(fontFamily = playfairDisplayFont),
-    displayMedium = Typography().displayMedium.copy(fontFamily = playfairDisplayFont),
-    displaySmall = Typography().displaySmall.copy(fontFamily = playfairDisplayFont),
-    headlineLarge = Typography().headlineLarge.copy(fontFamily = playfairDisplayFont),
-    headlineMedium = Typography().headlineMedium.copy(fontFamily = playfairDisplayFont),
-    headlineSmall = Typography().headlineSmall.copy(fontFamily = playfairDisplayFont),
-    titleLarge = Typography().titleLarge.copy(fontFamily = playfairDisplayFont),
-    titleMedium = Typography().titleMedium.copy(fontFamily = playfairDisplayFont),
-    titleSmall = Typography().titleSmall.copy(fontFamily = playfairDisplayFont)
+    displayLarge = Typography().displayLarge.copy(fontFamily = SansSerif),
+    displayMedium = Typography().displayMedium.copy(fontFamily = SansSerif),
+    displaySmall = Typography().displaySmall.copy(fontFamily = SansSerif),
+    headlineLarge = Typography().headlineLarge.copy(fontFamily = SansSerif),
+    headlineMedium = Typography().headlineMedium.copy(fontFamily = SansSerif),
+    headlineSmall = Typography().headlineSmall.copy(fontFamily = SansSerif),
+    titleLarge = Typography().titleLarge.copy(fontFamily = SansSerif),
+    titleMedium = Typography().titleMedium.copy(fontFamily = SansSerif),
+    titleSmall = Typography().titleSmall.copy(fontFamily = SansSerif)
 )
 class MainActivity : AppCompatActivity() {
     private lateinit var db: AppDatabase
@@ -114,7 +99,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         db = AppDatabase.getDatabase(this, dbPassphrase)
-        checkAndRequestAutofillService()
         splashScreen.setKeepOnScreenCondition {
             isLocked.value
         }
@@ -141,7 +125,7 @@ class MainActivity : AppCompatActivity() {
             setupContent()
         }
     }
-    private fun checkAndRequestAutofillService() {
+    private fun requestAutofillService() {
         val autofillManager = getSystemService(AutofillManager::class.java)
         if (autofillManager != null && !autofillManager.hasEnabledAutofillServices()) {
             val intent = Intent("android.settings.REQUEST_SET_AUTOFILL_SERVICE")
@@ -155,20 +139,20 @@ class MainActivity : AppCompatActivity() {
     }
     private fun setupContent() {
         setContent {
-            val isDarkParam by dataStore.data.map { it[DARK_MODE_KEY] ?: true }.collectAsState(initial = true)
             val scope = rememberCoroutineScope()
             val homeListState = androidx.compose.foundation.lazy.rememberLazyListState()
             var pressBackTime by remember { mutableStateOf(0L) }
             val context = androidx.compose.ui.platform.LocalContext.current
+            var autofillPrompted by rememberSaveable { mutableStateOf(false) }
             MaterialTheme(
-                colorScheme = if (isDarkParam) DarkGrayColorScheme else LightGrayColorScheme,
+                colorScheme = DarkGrayColorScheme,
                 shapes = AppShapes,
                 typography = AppTypography
             ) {
                 val colorScheme = MaterialTheme.colorScheme
                 SideEffect {
                     window.statusBarColor = colorScheme.surface.toArgb()
-                    WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = !isDarkParam
+                    WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = false
                 }
                 Box(modifier = Modifier.fillMaxSize()) {
                     var currentScreen by remember { mutableStateOf("home") }
@@ -178,6 +162,13 @@ class MainActivity : AppCompatActivity() {
                     var webViewTitle by remember { mutableStateOf("") }
                     val items by db.vaultDao().getAllItems().collectAsState(initial = emptyList())
                     val selectedItem = items.find { it.id == selectedItemId }
+                    LaunchedEffect(isLocked.value) {
+                        if (!isLocked.value && !autofillPrompted) {
+                            delay(3000)
+                            requestAutofillService()
+                            autofillPrompted = true
+                        }
+                    }
                     androidx.activity.compose.BackHandler(enabled = currentScreen == "home") {
                         if (System.currentTimeMillis() - pressBackTime < 2000) {
                             (context as android.app.Activity).finish()
@@ -242,7 +233,7 @@ class MainActivity : AppCompatActivity() {
                                         item = selectedItem,
                                         onBack = {
                                             selectedItemId = null
-                                            currentScreen = "home" 
+                                            currentScreen = "home"
                                         },
                                         onUpdate = { updatedItem ->
                                             scope.launch {
@@ -263,12 +254,6 @@ class MainActivity : AppCompatActivity() {
                             }
                             "settings" -> SettingsScreen(
                                 onBack = { currentScreen = "home" },
-                                isDarkMode = isDarkParam,
-                                onThemeToggle = { dark ->
-                                    scope.launch {
-                                        dataStore.edit { it[DARK_MODE_KEY] = dark }
-                                    }
-                                },
                                 onImport = { importedItems ->
                                     scope.launch {
                                         importedItems.forEach { db.vaultDao().insertItem(it) }

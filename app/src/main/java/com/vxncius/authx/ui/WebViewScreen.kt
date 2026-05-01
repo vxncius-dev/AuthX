@@ -1,15 +1,19 @@
 package com.vxncius.authx.ui
+import android.app.Activity
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
-@OptIn(ExperimentalMaterial3Api::class)
+import androidx.core.view.WindowCompat
+
 @Composable
 fun WebViewScreen(
     url: String,
@@ -17,21 +21,16 @@ fun WebViewScreen(
     onBack: () -> Unit
 ) {
     androidx.activity.compose.BackHandler(onBack = onBack)
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(title) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    titleContentColor = MaterialTheme.colorScheme.onBackground
-                ),
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
+    val context = LocalContext.current
+    val activity = context as? Activity
+    SideEffect {
+        activity?.window?.statusBarColor = Color.White.toArgb()
+        activity?.window?.let { window ->
+            WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = true
         }
+    }
+    Scaffold(
+        containerColor = Color.White
     ) { padding ->
         AndroidView(
             factory = { context ->
