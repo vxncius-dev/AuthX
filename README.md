@@ -29,11 +29,7 @@ Exportações utilizam AES-GCM com chave protegida pelo Android Keystore, tornan
 
 ## Instalação
 
-Baixe o APK:
-
-[Download na Uptodown](https://authx.br.uptodown.com/android)
-
-### Build local
+Baixe [para android](https://github.com/vxncius-dev/AuthX/releases/download/v1.21.5/app-release.apk) ou faça o Build local
 
 ```bash
 git clone <repo>
