@@ -92,5 +92,5 @@ Para o **release**, as credenciais de assinatura são lidas de `local.properties
 
 ## Licenças
 
-- O código do AuthX é distribuído sob a licença **MIT** — veja [LICENSE](LICENSE).
+- O código do AuthX é distribuído sob a licença **Source-Available, Não Comercial** — veja [LICENSE](LICENSE).
 - As dependências de terceiros e suas licenças estão documentadas em [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
