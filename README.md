@@ -1,29 +1,29 @@
 # AuthX
 
-AuthX é um cofre digital para Android focado em privacidade. Ele combina gerenciamento de senhas, armazenamento de dados sensíveis (cartões, endereços, notas) e autenticação em dois fatores (TOTP) em um único app, com uma interface limpa em Jetpack Compose.
+AuthX é um cofre digital para Android focado em privacidade. Ele combina gerenciamento de senhas, armazenamento de dados sensíveis (cartões, endereços e notas) e autenticação em dois fatores (TOTP) em um único app, com uma interface limpa em Jetpack Compose.
 
-**Sem nuvem. Sem conta. Sem rastreamento.** Todos os dados ficam exclusivamente no seu dispositivo, protegidos por criptografia forte. O AuthX funciona 100% offline e não depende de nenhum serviço de nuvem ou servidor externo para armazenar ou sincronizar seus dados.
+**Sem nuvem. Sem conta. Sem rastreamento.** Todos os dados ficam exclusivamente no dispositivo, protegidos por criptografia forte. O AuthX funciona offline e não depende de servidor próprio ou serviço de nuvem para armazenar ou sincronizar seus dados.
 
 ## Funcionalidades
 
-- 🔐 **Cofre local criptografado** — logins, cartões, endereços, notas e segredos TOTP em um banco SQLCipher protegido por passphrase + biometria
-- ⏱️ **TOTP / 2FA** — códigos de autenticação em dois fatores com configuração por leitura de QR Code e suporte a SHA1/SHA256/SHA512, dígitos e período configuráveis
-- 🖊️ **Android Autofill** — preenchimento automático de credenciais, cartões e endereços diretamente no sistema
-- 🎲 **Gerador de senhas** — senhas fortes geradas no app e nas sugestões do Autofill
-- 📦 **Backups `.authx`** — exportação e importação com criptografia portátil (senha + AES-256-GCM), além da importação de CSVs antigos
-- 👁️ **Biometria e tela segura** — desbloqueio por biometria/passphrase e bloqueio de captura de tela
-- 🌑 **UI escura minimalista** — design system próprio (escala de cinza + acentos âmbar/teal), tipografia Poppins e animação Lottie no splash
+- **Cofre local criptografado** — logins, cartões, endereços, notas e segredos TOTP em um banco SQLCipher protegido por passphrase e biometria
+- **TOTP / 2FA** — códigos de autenticação em dois fatores com configuração por leitura de QR Code e suporte a SHA1, SHA256 e SHA512, além de dígitos e período configuráveis
+- **Android Autofill** — preenchimento automático de credenciais, cartões e endereços diretamente pelo sistema
+- **Gerador de senhas** — senhas fortes geradas no app e nas sugestões do Autofill
+- **Backups `.authx`** — exportação e importação com criptografia portátil (senha + AES-256-GCM), além da importação de CSVs antigos
+- **Biometria e tela segura** — desbloqueio por biometria/passphrase e bloqueio de captura de tela
+- **Interface minimalista** — design system próprio com escala de cinza e acentos âmbar/teal, tipografia Poppins e animação Lottie no splash
 
 ## Segurança
 
 A arquitetura segue o princípio de *defesa em profundidade*:
 
-1. **Banco local**: o Room usa SQLCipher (AES-256) com uma passphrase gerada/protegida no dispositivo. Nada é gravado em texto puro.
-2. **Backups `.authx` (formato V2)**: arquivos criptografados com **PBKDF2-HMAC-SHA256 (600.000 iterações) + AES-256-GCM**, com sal e IV aleatórios e cabeçalho autenticado (AAD). Diferente da versão antiga, o backup **não depende do Android Keystore**: ele é portátil entre dispositivos/instalações desde que você saiba a senha escolhida na exportação.
-3. **Legado V1**: backups antigos (chave no Android Keystore) ainda podem ser **lidos** para importação, mas não são mais gerados.
-4. **Autenticação**: biometria + passphrase para desbloquear o cofre; `FLAG_SECURE` impede captura de tela.
+1. **Banco local:** o Room usa SQLCipher (AES-256) com uma passphrase gerada e protegida no dispositivo. Os dados do cofre não são armazenados em texto puro.
+2. **Backups `.authx` (formato V2):** arquivos criptografados com **PBKDF2-HMAC-SHA256 (600.000 iterações) + AES-256-GCM**, com sal e IV aleatórios e cabeçalho autenticado (AAD). Diferentemente da versão antiga, o backup não depende do Android Keystore e é portátil entre dispositivos e instalações, desde que a senha escolhida durante a exportação esteja disponível.
+3. **Legado V1:** backups antigos, cuja chave dependia do Android Keystore, ainda podem ser lidos para importação, mas não são mais gerados.
+4. **Autenticação:** biometria + passphrase para desbloquear o cofre. `FLAG_SECURE` impede a captura de tela enquanto o app está protegido.
 
-> O app não envia nenhum dado para fora do dispositivo. Os únicos componentes opcionais que dependem do Google Play Services instalado no aparelho são a fonte via **Google Fonts** e o modelo *on-device* de leitura de QR (**ML Kit**) — ambos operam localmente e não transmitem dados seus.
+> O app não envia dados do cofre para fora do dispositivo. Os únicos componentes opcionais que dependem do Google Play Services instalado no aparelho são a fonte via Google Fonts e o modelo *on-device* de leitura de QR do ML Kit. Esses componentes não são usados para transmitir os dados armazenados no cofre.
 
 ## Stack
 
@@ -43,54 +43,63 @@ A arquitetura segue o princípio de *defesa em profundidade*:
 
 ## Estrutura do projeto
 
-```
+```text
 app/src/main/java/com/vxncius/authx/
-├── MainActivity.kt        # Navegação, splash, desbloqueio e orquestração das telas
-├── data/                  # Camada de dados (Room + SQLCipher)
-│   ├── AppDatabase.kt     # Banco criptografado (SupportFactory do SQLCipher)
-│   ├── VaultDao.kt        # DAO dos itens do cofre
-│   └── VaultItem.kt       # Entidade (logins, cartões, endereços, TOTP…)
-├── logic/                 # Regras de negócio puras e testáveis (JVM)
-│   ├── AuthxFileCrypto.kt # Formato .authx V2 (PBKDF2 + AES-GCM) e parser CSV
-│   ├── CsvHandler.kt      # I/O via SAF + leitura do formato legado V1
-│   ├── ImportValidator.kt # Deduplicação na importação de backups
-│   ├── TotpManager.kt     # Geração de códigos TOTP
-│   └── BiometricHelper.kt # Biometria / passphrase
+├── MainActivity.kt
+├── data/
+│   ├── AppDatabase.kt
+│   ├── VaultDao.kt
+│   └── VaultItem.kt
+├── logic/
+│   ├── AuthxFileCrypto.kt
+│   ├── CsvHandler.kt
+│   ├── ImportValidator.kt
+│   ├── TotpManager.kt
+│   └── BiometricHelper.kt
 ├── service/
-│   └── MyAutofillService.kt # Android Autofill
-└── ui/                    # Telas e componentes Jetpack Compose
-    ├── HomeScreen.kt      # Lista do cofre + anel de progresso do TOTP
-    ├── SettingsScreen.kt  # Configurações, export/import de backups
-    ├── SplashScreen.kt    # Animação Lottie
-    ├── AddItemScreen.kt / AddCardScreen.kt / AddAddressScreen.kt
-    ├── ItemDetailScreen.kt / PasswordGeneratorScreen.kt
-    └── theme/             # Design system (AuthXDesign.kt)
+│   └── MyAutofillService.kt
+└── ui/
+    ├── HomeScreen.kt
+    ├── SettingsScreen.kt
+    ├── SplashScreen.kt
+    ├── AddItemScreen.kt
+    ├── AddCardScreen.kt
+    ├── AddAddressScreen.kt
+    ├── ItemDetailScreen.kt
+    ├── PasswordGeneratorScreen.kt
+    └── theme/
 
-app/src/test/              # Testes unitários (cripto, importação, validação)
+app/src/test/
 ```
 
 A lógica de criptografia e importação (`logic/`) é **pura JVM** e coberta por testes unitários (`app/src/test`), mantendo o núcleo sensível independente do Android e verificável em CI.
 
 ## Instalação
 
-Baixe o APK publicado:
+A versão publicada do AuthX está disponível no GitHub Releases:
 
-- [GitHub Releases (v1.22.0)](https://github.com/vxncius-dev/AuthX/releases/download/v1.22.0/app-release.apk)
-- [Uptodown](https://authx.br.uptodown.com/android)
+* [GitHub Releases — v1.22.0](https://github.com/vxncius-dev/AuthX/releases/download/v1.22.0/app-release.apk)
 
 ### Build local
 
 ```bash
 git clone https://github.com/vxncius-dev/AuthX.git
 cd AuthX
-./gradlew assembleDebug          # APK de debug
-./gradlew testDebugUnitTest      # testes unitários
+./gradlew assembleDebug
+./gradlew testDebugUnitTest
 ```
 
-Para o **release**, as credenciais de assinatura são lidas de `local.properties` (ignorado pelo git) ou de variáveis de ambiente:
-`AUTHX_RELEASE_STORE_FILE`, `AUTHX_RELEASE_STORE_PASSWORD`, `AUTHX_RELEASE_KEY_ALIAS`, `AUTHX_RELEASE_KEY_PASSWORD`.
+Para builds de release, as credenciais de assinatura são lidas de `local.properties` (ignorado pelo Git) ou de variáveis de ambiente:
 
-## Licenças
+```text
+AUTHX_RELEASE_STORE_FILE
+AUTHX_RELEASE_STORE_PASSWORD
+AUTHX_RELEASE_KEY_ALIAS
+AUTHX_RELEASE_KEY_PASSWORD
+```
 
-- O código do AuthX é distribuído sob a licença **Source-Available, Não Comercial** — veja [LICENSE](LICENSE).
-- As dependências de terceiros e suas licenças estão documentadas em [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+## Licença
+
+O código do AuthX é distribuído sob uma licença **Source-Available, Não Comercial** — código-fonte aberto para consulta, estudo e contribuição, sem uso comercial permitido sem autorização prévia. Consulte [LICENSE](LICENSE) para o texto completo da licença.
+
+As dependências de terceiros e suas respectivas licenças estão documentadas em [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES.md).

@@ -15,27 +15,30 @@ Ao utilizar, copiar, modificar ou distribuir o AuthX, você concorda em se
 sujeitar aos termos desta licença. Se você não concordar com estes termos,
 não poderá utilizar o Software.
 
----
 
-## 1. Definições
+Seção 1 — Definições
 
-- "Software": o código-fonte, os binários, a documentação e demais arquivos
-  deste repositório (AuthX), em qualquer forma ou mídia.
-- "Você": a pessoa física ou jurídica que exerce qualquer direito concedido
-  por esta licença, ou que utiliza o Software de qualquer forma.
-- "Uso Comercial": qualquer uso do Software, ou de trabalho derivado dele,
-  com a finalidade de obter vantagem econômica, direta ou indireta — incluindo,
-  sem se limitar a, venda, cobrança de assinatura, inclusão em produto ou
-  serviço pago, oferta como serviço (SaaS), ou uso para captação de clientes
-  para produto ou serviço concorrente.
-- "Marca AuthX": o nome "AuthX" e suas variações, incluindo termos que
-  sugiram vínculo ou endosso oficial (por exemplo, "AuthX Official"),
-  bem como o logotipo, o ícone do aplicativo, a paleta de cores e a
-  identidade visual associados ao projeto. A Marca AuthX não está incluída
-  na definição de "Software" e não é abrangida pelos direitos de cópia e
-  modificação concedidos nesta licença.
+"Software": o código-fonte, os binários, a documentação e demais arquivos
+deste repositório (AuthX), em qualquer forma ou mídia.
 
-## 2. Direitos concedidos
+"Você": a pessoa física ou jurídica que exerce qualquer direito concedido
+por esta licença, ou que utiliza o Software de qualquer forma.
+
+"Uso Comercial": qualquer uso do Software, ou de trabalho derivado dele,
+com a finalidade de obter vantagem econômica, direta ou indireta, incluindo,
+sem se limitar a, venda, cobrança de assinatura, inclusão em produto ou
+serviço pago, oferta como serviço (SaaS), ou uso para captação de clientes
+para produto ou serviço concorrente.
+
+"Marca AuthX": o nome "AuthX" e suas variações, incluindo termos que
+sugiram vínculo ou endosso oficial (por exemplo, "AuthX Official"), bem
+como o logotipo, o ícone do aplicativo, a paleta de cores e a identidade
+visual associados ao projeto. A Marca AuthX não está incluída na definição
+de "Software" e não é abrangida pelos direitos de cópia e modificação
+concedidos nesta licença.
+
+
+Seção 2 — Direitos concedidos
 
 Sujeito ao cumprimento integral dos termos desta licença, você pode, sem
 necessidade de autorização adicional:
@@ -48,7 +51,8 @@ necessidade de autorização adicional:
 - utilizar o Software para fins pessoais, educacionais e de pesquisa;
 - contribuir com o projeto original (pull requests, relato de issues, etc.).
 
-## 3. Restrições
+
+Seção 3 — Restrições
 
 Sem autorização expressa e por escrito do titular dos direitos, você não
 pode:
@@ -56,8 +60,8 @@ pode:
 - vender o AuthX, integralmente ou em parte;
 - vender um APK ou qualquer build baseado no AuthX;
 - incluir o AuthX, ou qualquer trabalho derivado dele, em produto comercial;
-- oferecer o AuthX, ou qualquer trabalho derivado dele, como serviço comercial
-  (SaaS, hospedagem paga, etc.);
+- oferecer o AuthX, ou qualquer trabalho derivado dele, como serviço
+  comercial (SaaS, hospedagem paga, etc.);
 - redistribuir uma versão modificada do AuthX com finalidade comercial;
 - utilizar o código do AuthX, total ou parcialmente, para criar produto
   comercial concorrente.
@@ -65,7 +69,8 @@ pode:
 Qualquer um dos usos acima requer a celebração prévia de uma licença
 comercial específica com o titular dos direitos, conforme a Seção 6.
 
-## 4. Separação entre Código e Marca
+
+Seção 4 — Separação entre Código e Marca
 
 Esta é uma condição essencial desta licença e independe das demais seções.
 
@@ -80,15 +85,16 @@ trabalho derivado:
 3. não pode se apresentar como "AuthX Official", "versão oficial",
    "sucessor oficial" ou qualquer outro termo que sugira vínculo, endosso ou
    continuidade oficial com o projeto original;
-4. não pode ser publicado em lojas de aplicativos (Play Store, F-Droid, etc.)
-   com o nome ou os ícones do AuthX — forks distribuídos publicamente devem
-   adotar nome e identidade visual próprios, claramente distintos.
+4. não pode ser publicado em lojas de aplicativos (Play Store, F-Droid,
+   etc.) com o nome ou os ícones do AuthX — forks distribuídos publicamente
+   devem adotar nome e identidade visual próprios, claramente distintos.
 
 Um fork é livre para existir, evoluir e ser distribuído (respeitando a
 Seção 3), desde que utilize identidade própria e deixe claro que não é o
 AuthX original nem é mantido pelo autor.
 
-## 5. Atribuição obrigatória
+
+Seção 5 — Atribuição obrigatória
 
 Toda cópia, fork ou trabalho derivado do Software deve manter:
 
@@ -97,14 +103,16 @@ Toda cópia, fork ou trabalho derivado do Software deve manter:
 - indicação clara de que se trata de um fork ou trabalho derivado, e não do
   projeto original.
 
-## 6. Uso comercial e licenciamento
+
+Seção 6 — Uso comercial e licenciamento
 
 Caso você tenha interesse em qualquer um dos usos listados na Seção 3,
 entre em contato com o titular dos direitos por meio do repositório oficial
 (https://github.com/vxncius-dev/AuthX) para negociar uma licença comercial
 específica.
 
-## 7. Isenção de garantias
+
+Seção 7 — Isenção de garantias
 
 O Software é fornecido "como está", sem garantias de qualquer natureza,
 expressas ou implícitas, incluindo, mas não se limitando a, garantias de
@@ -114,7 +122,8 @@ responsável por qualquer reivindicação, dano ou outra responsabilidade,
 seja em ação contratual, extracontratual ou de outra natureza, decorrente do
 uso ou da impossibilidade de uso do Software.
 
-## 8. Rescisão
+
+Seção 8 — Rescisão
 
 Esta licença é automaticamente rescindida se você violar qualquer uma de
 suas condições. Após a rescisão, você deverá cessar imediatamente todo uso,
