@@ -24,10 +24,10 @@ android {
 
     defaultConfig {
         applicationId = "com.vxncius.authx"
-        minSdk = 26
+        minSdk = 24
         targetSdk = 35
-        versionCode = 12105
-        versionName = "1.21.5"
+        versionCode = 12200
+        versionName = "1.22.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -45,6 +45,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix = ".debug"
+        }
+
         release {
             isMinifyEnabled = false
             signingConfig = signingConfigs.getByName("release")
@@ -63,6 +67,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.8"
@@ -125,6 +130,9 @@ dependencies {
 
     // Google Fonts
     implementation("androidx.compose.ui:ui-text-google-fonts:1.5.4")
+
+    // Lottie (splash screen animation)
+    implementation("com.airbnb.android:lottie-compose:6.2.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

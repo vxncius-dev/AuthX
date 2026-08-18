@@ -7,6 +7,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
@@ -14,9 +15,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.vxncius.authx.data.VaultItem
+import com.vxncius.authx.ui.theme.AuthXColors
+import com.vxncius.authx.ui.theme.AuthXRadius
+import com.vxncius.authx.ui.theme.Poppins
+
+private val addFieldShape = RoundedCornerShape(AuthXRadius.Row)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddItemScreen(
@@ -29,6 +36,13 @@ fun AddItemScreen(
     var password by remember { mutableStateOf("") }
     var totpSecret by remember { mutableStateOf("") }
     var showScanner by remember { mutableStateOf(false) }
+    val addFieldColors = OutlinedTextFieldDefaults.colors(
+        unfocusedBorderColor = AuthXColors.BorderSubtle,
+        focusedBorderColor = AuthXColors.BorderCard,
+        unfocusedContainerColor = AuthXColors.SurfaceRow,
+        focusedContainerColor = AuthXColors.SurfaceRow,
+        cursorColor = AuthXColors.TextPrimary
+    )
     BackHandler {
         if (showScanner) {
             showScanner = false
@@ -76,7 +90,7 @@ fun AddItemScreen(
                 onValueChange = { title = it },
                 label = { Text("Título (ex: Netflix)") },
                 modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium
+                shape = addFieldShape, colors = addFieldColors
             )
             Spacer(Modifier.height(8.dp))
             OutlinedTextField(
@@ -84,7 +98,7 @@ fun AddItemScreen(
                 onValueChange = { websiteUrl = it },
                 label = { Text("URL do site (ex: netflix.com)") },
                 modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium
+                shape = addFieldShape, colors = addFieldColors
             )
             Spacer(Modifier.height(8.dp))
             OutlinedTextField(
@@ -92,7 +106,7 @@ fun AddItemScreen(
                 onValueChange = { username = it },
                 label = { Text("Usuário / Email") },
                 modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium
+                shape = addFieldShape, colors = addFieldColors
             )
             Spacer(Modifier.height(8.dp))
             OutlinedTextField(
@@ -100,17 +114,23 @@ fun AddItemScreen(
                 onValueChange = { password = it },
                 label = { Text("Senha") },
                 modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium
+                shape = addFieldShape, colors = addFieldColors
             )
             Spacer(Modifier.height(24.dp))
-            Text("Autenticação de Dois Fatores (Opcional)", style = MaterialTheme.typography.titleSmall)
+            Text(
+                "Autenticação de Dois Fatores (Opcional)",
+                style = MaterialTheme.typography.titleSmall,
+                fontFamily = Poppins,
+                fontWeight = FontWeight.Medium,
+                color = AuthXColors.TextPrimary
+            )
             Spacer(Modifier.height(8.dp))
             OutlinedTextField(
                 value = totpSecret,
                 onValueChange = { totpSecret = it },
                 label = { Text("Chave Secreta TOTP") },
                 modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium,
+                shape = addFieldShape, colors = addFieldColors,
                 trailingIcon = {
                      IconButton(onClick = {
                         val permissionCheckResult = ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
@@ -139,11 +159,15 @@ fun AddItemScreen(
                         )
                     }
                 },
-                modifier = Modifier.fillMaxWidth().height(50.dp),
+modifier = Modifier.fillMaxWidth().height(50.dp),
                 enabled = title.isNotBlank(),
-                shape = MaterialTheme.shapes.medium
+                shape = RoundedCornerShape(AuthXRadius.Row),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = AuthXColors.TextPrimary,
+                    contentColor = AuthXColors.BgBase
+                )
             ) {
-                Text("Salvar no Cofre")
+                Text("Salvar no Cofre", fontFamily = Poppins, fontWeight = FontWeight.Medium)
             }
         }
     }

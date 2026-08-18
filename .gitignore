@@ -1,38 +1,53 @@
-# Build artifacts
-bin/
-gen/
-out/
-build/
+# Gradle
 .gradle/
-app/build/
+build/
+**/build/
+.kotlin/
 
-# IDE specific files
+# Local configuration
+local.properties
+
+# Android Studio / IntelliJ IDEA
 .idea/
-.vscode/
 *.iml
 *.iws
 *.ipr
-.navigation/
 
-# Gradle
-.gradle/
-local.properties
-.DS_Store
+# VS Code
+.vscode/
 
-# Android Studio
+# Android
 captures/
-*.swp
-*.~
-crashlytics-build.properties
+.externalNativeBuild/
+.cxx/
 
-# Secrets (Always ignore keystores and sensitive files)
-*.keystore
+# APK / AAB build artifacts
+*.apk
+*.aab
+
+# Signing keys / secrets
 *.jks
+*.keystore
+*.p12
+*.pfx
 secret.properties
 db-passphrase.txt
 
-# Temporary/Log files
+# Temporary / OS files
 *.log
+*.tmp
+*.bak
+*.orig
+*.rej
+*.hprof
+.DS_Store
+Thumbs.db
+
+# Generated output
+gen/
+out/
+
+# Project-specific logs / artifacts
 build_*.txt
 dependencies.txt
 full_logcat.txt

@@ -3,6 +3,7 @@ package com.vxncius.authx.ui
 import android.content.ClipboardManager
 import android.content.Context
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
@@ -32,11 +34,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.vxncius.authx.ui.theme.AuthXColors
+import com.vxncius.authx.ui.theme.AuthXRadius
+import com.vxncius.authx.ui.theme.Poppins
 import kotlin.random.Random
 
 @Composable
@@ -94,10 +99,16 @@ fun PasswordGeneratorScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val passwordCardShape = RoundedCornerShape(AuthXRadius.Card)
             Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                shape = MaterialTheme.shapes.medium
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, AuthXColors.BorderCard, passwordCardShape),
+                colors = CardDefaults.cardColors(
+                    containerColor = AuthXColors.SurfaceCard,
+                    contentColor = AuthXColors.TextPrimary
+                ),
+                shape = passwordCardShape
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
                     Row(
@@ -107,8 +118,9 @@ fun PasswordGeneratorScreen(
                         Text(
                             text = generatedPassword.ifBlank { "Selecione pelo menos uma opção" },
                             style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary,
+                            fontFamily = FontFamily.Monospace,
+                            fontWeight = FontWeight.Medium,
+                            color = AuthXColors.TextPrimary,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.weight(1f)
@@ -123,7 +135,7 @@ fun PasswordGeneratorScreen(
                             },
                             enabled = generatedPassword.isNotBlank()
                         ) {
-                            Icon(Icons.Default.ContentCopy, contentDescription = "Copiar senha")
+                            Icon(Icons.Default.ContentCopy, contentDescription = "Copiar senha", tint = AuthXColors.TextSecondary)
                         }
                     }
                     Spacer(Modifier.height(8.dp))
@@ -131,15 +143,27 @@ fun PasswordGeneratorScreen(
                         text = strength.label,
                         color = strength.color,
                         style = MaterialTheme.typography.labelLarge,
+                        fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
             }
 
             Spacer(Modifier.height(28.dp))
-            Text("Opções", style = MaterialTheme.typography.titleMedium, modifier = Modifier.align(Alignment.Start))
+            Text(
+                "Opções",
+                style = MaterialTheme.typography.titleMedium,
+                fontFamily = Poppins,
+                fontWeight = FontWeight.SemiBold,
+                color = AuthXColors.TextPrimary,
+                modifier = Modifier.align(Alignment.Start)
+            )
             Spacer(Modifier.height(16.dp))
-            Text("Comprimento: ${length.toInt()}")
+            Text(
+                "Comprimento: ${length.toInt()}",
+                color = AuthXColors.TextSecondary,
+                style = MaterialTheme.typography.bodyLarge
+            )
             Slider(
                 value = length,
                 onValueChange = { length = it },
@@ -149,19 +173,19 @@ fun PasswordGeneratorScreen(
             )
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                 Checkbox(checked = useUppercase, onCheckedChange = { useUppercase = it })
-                Text("Letras Maiúsculas (A-Z)")
+                Text("Letras Maiúsculas (A-Z)", color = AuthXColors.TextPrimary)
             }
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                 Checkbox(checked = useLowercase, onCheckedChange = { useLowercase = it })
-                Text("Letras Minúsculas (a-z)")
+                Text("Letras Minúsculas (a-z)", color = AuthXColors.TextPrimary)
             }
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                 Checkbox(checked = useNumbers, onCheckedChange = { useNumbers = it })
-                Text("Números (0-9)")
+                Text("Números (0-9)", color = AuthXColors.TextPrimary)
             }
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                 Checkbox(checked = useSymbols, onCheckedChange = { useSymbols = it })
-                Text("Símbolos (!@#$)")
+                Text("Símbolos (!@#$)", color = AuthXColors.TextPrimary)
             }
         }
     }
@@ -169,7 +193,7 @@ fun PasswordGeneratorScreen(
 
 private data class PasswordStrength(
     val label: String,
-    val color: Color
+    val color: androidx.compose.ui.graphics.Color
 )
 
 private fun passwordStrength(
@@ -183,9 +207,9 @@ private fun passwordStrength(
     val score = length + variety * 4
 
     return when {
-        variety == 0 -> PasswordStrength("Segurança: indisponível", Color(0xFFFF3B30))
-        score < 20 -> PasswordStrength("Segurança: fraca", Color(0xFFFF3B30))
-        score < 32 -> PasswordStrength("Segurança: média", Color(0xFFFF9800))
-        else -> PasswordStrength("Segurança: forte", Color(0xFF00E676))
+        variety == 0 -> PasswordStrength("Segurança: indisponível", AuthXColors.DangerRed)
+        score < 20 -> PasswordStrength("Segurança: fraca", AuthXColors.DangerRed)
+        score < 32 -> PasswordStrength("Segurança: média", AuthXColors.AccentAmber)
+        else -> PasswordStrength("Segurança: forte", AuthXColors.AccentTeal)
     }
 }
